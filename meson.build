@@ -54,6 +54,22 @@ if host_machine.system() == 'darwin'
 endif
 
 libc_args = []
+if not get_option('std').disabled()
+  libc_args += ['--cfg', 'feature="std"']
+endif
+if get_option('align').enabled()
+  libc_args += ['--cfg', 'feature="align"']
+endif
+if get_option('extra-traits').enabled()
+  libc_args += ['--cfg', 'feature="extra-traits"']
+endif
+if get_option('const-extern-fn').enabled()
+  if rustc.version().version_compare('< 1.40')
+    error('const-exttern-fn requires a compiler >= 1.40')
+  endif
+  libc_args += ['--cfg', 'feature="const-extern-fn"']
+endif
+
 foreach o : options
   libc_args += ['--cfg', o]
 endforeach
